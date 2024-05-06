@@ -1,6 +1,7 @@
 import turtle
 
 
+# Renders paper bag that turtle must escape
 def draw_bag():
     turtle.shape("turtle")
     turtle.pen(pencolor="blue", pensize=5)
@@ -15,10 +16,28 @@ def draw_bag():
     turtle.forward(70)
 
 
+# Check if turtle escaped x or y bounds of paper bag
+def escaped(position):
+    x = int(position[0])
+    y = int(position[1])
+
+    return x < -35 or x > 35 or y < -35 or y > 35
+
+
+def draw_line():
+    angle = 0
+    step = 5
+    tur = turtle.Turtle()
+
+    while not escaped(tur.position()):
+        tur.left(angle)
+        tur.forward(step)
+
+
 if __name__ == "__main__":
     # Sets window size
     turtle.setworldcoordinates(-70.0, -70.0, 70.0, 70.0)
     draw_bag()
-
+    draw_line()
     # Prevents window from closing automatically
     turtle.mainloop()
