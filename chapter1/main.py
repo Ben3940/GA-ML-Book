@@ -61,6 +61,15 @@ def draw_squares(number):
     return path
 
 
+def draw_spirangles(number):
+    angle = 120
+    tur = turtle.Turtle()
+
+    for i in range(1, number):
+        tur.forward(i * 10)
+        tur.right(angle)
+
+
 # Draw all squares and save to file
 def draw_squares_until_escaped(n):
     tur = turtle.Turtle()
