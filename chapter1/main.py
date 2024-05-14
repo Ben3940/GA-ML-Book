@@ -115,7 +115,7 @@ def store_position_data(path, tur):
 
 def save_path_to_file(path, file_name):
     with open(file_name, "wb") as file:
-        pickle.dump(path, file)
+        pickle.dump(path, f"./data/{file}")
 
 
 if __name__ == "__main__":
