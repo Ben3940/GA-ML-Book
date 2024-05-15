@@ -37,3 +37,10 @@ def best_feature_for_split(data):
     )
 
     return best_feature
+
+
+# Returns tuple of most common category with count of items in category.  If "most" (determine what this is) of data is in category, make a leaf node
+def potential_leaf_node(data):
+    # Count frequency of items in data, then return most_common frequency
+    count = collections.Counter([i[-1] for i in data])
+    return count.most_common(1)[0]
