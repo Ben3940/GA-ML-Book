@@ -44,3 +44,29 @@ def potential_leaf_node(data):
     # Count frequency of items in data, then return most_common frequency
     count = collections.Counter([i[-1] for i in data])
     return count.most_common(1)[0]
+
+
+def create_tree(data, label):
+    category, count = potential_leaf_node(data)
+
+    # All data is in one category, return category
+    if count == len(data):
+        return category
+
+    node = {}
+
+    # Find feature with best split
+    feature = best_feature_for_split(data)
+    feature_label = label[feature]
+
+    # Create subtree for feature, represented as Python dict
+    node[feature_label] = {}
+
+    # Get all distinct classes based on feature from data
+    classes = set([d[feature] for d in data])
+
+    for c in classes:
+        # Partition data based on feature
+        partitioned_data = [d for d in data if d[feature == c]]
+        node[feature_label][c] = create_tree(partitioned_data, label)
+    return node
