@@ -70,3 +70,15 @@ def create_tree(data, label):
         partitioned_data = [d for d in data if d[feature == c]]
         node[feature_label][c] = create_tree(partitioned_data, label)
     return node
+
+
+def classify(tree, label, data):
+    root = list(tree.keys())[0]
+    node = tree[root]
+    index = label.index(root)
+    for k in node.keys():
+        if data[index] == k:
+            if isinstance(node[k], dict):
+                return classify(node[k], label, data)
+            else:
+                return node[k]
