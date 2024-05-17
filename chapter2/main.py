@@ -3,9 +3,6 @@ import collections
 import operator
 import math
 
-with open("./data/data_spirangle", "rb") as file:
-    path = pickle.load(file)
-
 
 # Compute entropy: how "homogenous" a dataset is
 def entropy(data):
@@ -67,7 +64,7 @@ def create_tree(data, label):
 
     for c in classes:
         # Partition data based on feature
-        partitioned_data = [d for d in data if d[feature == c]]
+        partitioned_data = [d for d in data if d[feature] == c]
         node[feature_label][c] = create_tree(partitioned_data, label)
     return node
 
@@ -82,3 +79,29 @@ def classify(tree, label, data):
                 return classify(node[k], label, data)
             else:
                 return node[k]
+
+
+def as_rule_str(tree, label, ident=0):
+    space_ident = "  " * ident
+    s = space_ident
+    root = list(tree.keys())[0]
+    node = tree[root]
+    index = label.index(root)
+    for k in node.keys():
+        s += "if " + label[index] + " = " + str(k)
+        if isinstance(node[k], dict):
+            s += ":\n" + space_ident + as_rule_str(node[k], label, ident + 1)
+        else:
+            s += " then " + str(node[k]) + (".\n" if ident == 0 else ", ")
+    if s[-2:] == ", ":
+        s = s[:-2]
+    s += "\n"
+    return s
+
+
+if __name__ == "__main__":
+    data = [[0, 0, False], [-1, 0, True], [1, 0, True], [0, -1, True], [0, 1, True]]
+    label = ["x", "y", "out"]
+    tree = create_tree(data, label)
+    category = classify(tree, label, [1, 1])
+    print(as_rule_str(tree, label))
