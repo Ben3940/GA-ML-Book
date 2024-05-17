@@ -1,3 +1,6 @@
+# This file discusses "categories" while computing "entropy" and "information gain".  The categories of the dataset are the "x" and "y" values of each point stored in the data file.
+
+
 import pickle
 import collections
 import operator
@@ -9,25 +12,36 @@ def entropy(data):
     # Last column of data is "frequency" of each category
     frequency = collections.Counter([item[-1] for item in data])
 
+    # Compute entropy of single category
     def item_entropy(category):
         ratio = float(category) / len(data)
         return -1 * ratio * math.log(ratio, 2)
 
+    # Compute total entropy of given data
     return sum(item_entropy(c) for c in frequency.values())
 
 
+# Determine which feature provides the most "information gain"
 def best_feature_for_split(data):
+    # General entropy of data without any split.  This is highest amount of entropy for dataset
     baseline = entropy(data)
 
+    # Compute entropy of dataset based on split using feat
     def feature_entropy(feat):
         def e(v):
+            # The dataset split based on feat
             partitioned_data = [d for d in data if d[feat] == v]
+
+            # Proportion is because of the math associated with logarithms, which entropy calculations rely on
             proportion = float(len(partitioned_data)) / float(len(data))
             return proportion * entropy(partitioned_data)
 
         return sum(e(v) for v in set([d[feat] for d in data]))
 
+    # Data: [x_pos, y_pos, true_label]; x_pos and y_pos are actual features
     features = len(data[0]) - 1
+
+    # Largest difference in entropy between baseline and feature_entropy means highest information_gain
     information_gain = [baseline - feature_entropy(f) for f in range(features)]
     best_feature, best_gain = max(
         enumerate(information_gain), key=operator.itemgetter(1)
@@ -69,6 +83,7 @@ def create_tree(data, label):
     return node
 
 
+# Use tree to clasify if data is inside/outside of bag
 def classify(tree, label, data):
     root = list(tree.keys())[0]
     node = tree[root]
@@ -81,6 +96,7 @@ def classify(tree, label, data):
                 return node[k]
 
 
+# Print decision tree as ruleset string
 def as_rule_str(tree, label, ident=0):
     space_ident = "  " * ident
     s = space_ident
